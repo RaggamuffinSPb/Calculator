@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 
 public class Calculator {
     /**
-     * Метод count(String text) используется для вычисления арифметичекого выражения,
+     * Метод counter(String text) используется для вычисления арифметичекого выражения,
      * поступившего в text. Предполагается, что приведённое выражение содержит два числа
      * и знак действия: +,-,*,/
      * @param  text - строка с арифметическим выражением, тип "число знак число"
-     * @return String
+     * @return String - результат в текстовом представлении
      */
     private String counter(String text) { //3+4   5-6   -5-6
         Pattern digitPattern = Pattern.compile("(-?\\d+\\.\\d+|-?\\d+)([\\+\\-\\*\\/])(-?\\d+\\.\\d+|-?\\d+)");
@@ -45,7 +45,12 @@ public class Calculator {
      * @return String - double число в строковом представлении
      */
 
-
+    /**
+     * Ищет все умножения и деления в полученной строке
+     * Вызывает метод counter() для участка число умножить/делить число
+     * @param text - строка с арифметическим выражением, тип "число знак число"
+     * @return String - double число в строковом представлении
+     */
     private String findAllMuldiv(String text) {
 
         Pattern digitPattern = Pattern.compile("(-?\\d+\\.\\d+|-?\\d+)([\\*\\/])(-?\\d+\\.\\d+|-?\\d+)");
@@ -57,6 +62,13 @@ public class Calculator {
         } return text;
 
     }
+
+    /**
+     * Ищет все сложения и вычитания в полученной строке
+     * Вызывает метод counter() для участка число сложить/вычесть число
+     * @param text - строка с арифметическим выражением, тип "число знак число"
+     * @return String - double число в строковом представлении
+     */
     private String findAllPlusminus(String text) {
         Pattern digitPattern = Pattern.compile("(-?\\d+\\.\\d+|-?\\d+)([\\+\\-])(-?\\d+\\.\\d+|-?\\d+)");
         Matcher matcher = digitPattern.matcher(text);
@@ -82,25 +94,7 @@ public class Calculator {
 
         return text;
     }
-
-    public String extractFromBrackets(String text, int start, int end) {
-        StringBuilder result = new StringBuilder();
-        boolean trigger = false;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '(') {
-                trigger = true;
-                continue;
-            }
-            if (text.charAt(i) == ')') {
-                trigger = false;
-                return solve(result.toString());
-            }
-
-            if (trigger) result.append(text.charAt(i));
-        }
-        return solve(result.toString());
-    }
-
+    
     public String evaluate(String text,boolean toDo) {
         String result = solve(text);
         if (toDo) {
@@ -113,14 +107,10 @@ public class Calculator {
             } catch (NumberFormatException e) {
                 return null;
             }
-            String formattedDouble = new DecimalFormat("#0.0000").format(Double.valueOf(result));
-
-
+    
             return null;
         } else return result;
     }
 
 
 }
-// 1 + (2 + (3+4) + 5) + (6+7)
-//-5*2  -6/-2   -2-1    если есть * /, то умножаем-делим, иначе суммируем в т.ч. отрицательные
