@@ -19,31 +19,24 @@ public class Calculator {
         Matcher matcher = digitPattern.matcher(text);
         double value_1 = 0, value_2 = 0;
         char action = ' ';
-        while (matcher.find()) {
-            value_1 = Double.valueOf(matcher.group(1));
-            value_2 = Double.valueOf(matcher.group(3));
+        if (matcher.find()) {
+            value_1 = Double.valueOf(formatter(matcher.group(1)));
+            value_2 = Double.valueOf(formatter(matcher.group(3)));
             action = matcher.group(2).charAt(0);
         }
         if (action!=' ') {
             switch (action) {
-                case '+': return (value_1+value_2)+"";
-                case '-': return (value_1-value_2)+"";
-                case '*': return (value_1*value_2)+"";
+                case '+': return formatter((value_1+value_2)+"");
+                case '-': return formatter((value_1-value_2)+"");
+                case '*': return formatter((value_1*value_2)+"");
                 case '/': {
-                    if (value_2 != 0) return (value_1/value_2)+"";
+                    if (value_2 != 0) return formatter((value_1/value_2)+"");
                     else throw new RuntimeException("Unexpected action: dividing by zero");
                 }
             }
         }
         return text;
     }
-
-    /**
-     * Передаёт строку text методу solve(), получает численное значение в строковом представлении
-     * Форматирует и возвращает пользователю
-     * @param text - строка с арифметическим выражением, тип "число знак число"
-     * @return String - double число в строковом представлении
-     */
 
     /**
      * Ищет все умножения и деления в полученной строке
@@ -94,7 +87,7 @@ public class Calculator {
 
         return text;
     }
-    
+
     public String evaluate(String text,boolean toDo) {
         String result = solve(text);
         if (toDo) {
@@ -107,9 +100,20 @@ public class Calculator {
             } catch (NumberFormatException e) {
                 return null;
             }
-    
+
             return null;
         } else return result;
+    }
+    /**
+     * Костыльное форматирование для отсутствия конфликтов регулярного выражения с представлениями
+     * числа double в виде x.xE-y до 12го знака после запятой
+     * Точность - вежливость снайперов, а не моя.
+     * @param  text - строка с арифметическим выражением, тип "число знак число"
+     * @return String - результат в текстовом представлении
+     */
+    public String formatter(String text) {
+        String formattedDouble = new DecimalFormat("#0.000000000000").format(Double.valueOf(text)).replace(',','.');
+        return formattedDouble;
     }
 
 
